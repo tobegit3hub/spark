@@ -48,6 +48,7 @@ import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types.{DataType, StructType}
 import org.apache.spark.sql.util.ExecutionListenerManager
 import org.apache.spark.util.{CallSite, Utils}
+import com._4paradigm.fesql.offline.api.FesqlSession
 
 /**
  * The entry point to programming Spark with the Dataset and DataFrame API.
@@ -168,6 +169,12 @@ class SparkSession private(
    */
   @transient
   val sqlContext: SQLContext = new SQLContext(this)
+
+  /**
+   * Add by 4paradigm to support FESQL native execution engine.
+   */
+  @transient
+  val fesqlSession: FesqlSession = new FesqlSession(this)
 
   /**
    * Runtime configuration interface for Spark.
@@ -599,6 +606,24 @@ class SparkSession private(
    * @since 2.0.0
    */
   def sql(sqlText: String): DataFrame = withActive {
+    // Modify by 4paradigm to support FESQL and may fallback to SparkSQL
+    val disableFesql = scala.util.Properties.envOrElse("DISABLE_FESQL", "false")
+    if (disableFesql.toLowerCase().equals("true")) {
+      logInfo("FESQL is disable and run SparkSQL")
+      sparksql(sqlText)
+    } else {
+      try {
+        fesqlSession.sql(sqlText).getSparkDf()
+      } catch {
+        case e: Exception => {
+          logWarning(s"Fail to run with FESQL, fallback to SparkSQL")
+          sparksql(sqlText)
+        }
+      }
+    }
+  }
+
+  def sparksql(sqlText: String): DataFrame = withActive {
     val tracker = new QueryPlanningTracker
     val plan = tracker.measurePhase(QueryPlanningTracker.PARSING) {
       sessionState.sqlParser.parsePlan(sqlText)

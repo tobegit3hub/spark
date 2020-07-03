@@ -3254,6 +3254,9 @@ class Dataset[T] private[sql](
    * @since 2.0.0
    */
   def createOrReplaceTempView(viewName: String): Unit = withPlan {
+    // Modify by 4paradigm to support FESQL native execution engine
+    sparkSession.fesqlSession.registerTable(viewName, this.asInstanceOf[DataFrame])
+
     createTempViewCommand(viewName, replace = true, global = false)
   }
 
