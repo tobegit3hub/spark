@@ -19,5 +19,6 @@ upload_spark_distribution:
         variables:
             - $ENV_BUILD == "daily"
     script:
+        -  sed -i 's/$SPARK_HOME\/build\/mvn/mvn/g' ./dev/make-distribution.sh
         - ./dev/make-distribution.sh --name llvm-spark --pip --tgz -Phadoop-2.7 -Pyarn
         - ./upload_spark_distribution.sh
