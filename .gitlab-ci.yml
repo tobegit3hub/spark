@@ -15,7 +15,7 @@ build_spark:
 
 upload_spark_distribution:
     stage: build
-    except:
+    only:
         variables:
             - $ENV_BUILD == "daily"
     script:
