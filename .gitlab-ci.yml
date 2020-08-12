@@ -1,0 +1,22 @@
+image: develop-registry.4pd.io/centos6_gcc7_fesql:feat-add_scala_to_build_docker_image
+
+before_script:
+    - export JAVA_HOME=/depends/thirdparty/jdk1.8.0_141/
+    - export PATH=$PATH:/depends/thirdparty/apache-maven-3.6.3/bin/:/depends/thirdparty/jdk1.8.0_141/bin/
+
+stages:
+    - build
+
+build_spark:
+    stage: build
+    script:
+        - mvn clean package -DskipTests -Dscalatest.skip=true -Dwagon.skip=true -Dmaven.test.skip=true
+
+upload_spark_distribution:
+    stage: build
+    except:
+        variables:
+            - $ENV_BUILD == "daily"
+    script:
+        - ./dev/make-distribution.sh --name llvm-spark --pip --tgz -Phadoop-2.7 -Pyarn
+        - ./upload_spark_distribution.sh
