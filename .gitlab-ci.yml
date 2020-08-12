@@ -1,4 +1,4 @@
-image: develop-registry.4pd.io/centos6_gcc7_fesql:feat-add_scala_to_build_docker_image
+image: develop-registry.4pd.io/centos6_gcc7_fesql:master
 
 before_script:
     - source /opt/rh/python27/enable
