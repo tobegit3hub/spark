@@ -1,8 +1,9 @@
 image: develop-registry.4pd.io/centos6_gcc7_fesql:feat-add_scala_to_build_docker_image
 
 before_script:
+    - source /opt/rh/python27/enable
     - export JAVA_HOME=/depends/thirdparty/jdk1.8.0_141/
-    - export PATH=$PATH:/depends/thirdparty/apache-maven-3.6.3/bin/:/depends/thirdparty/jdk1.8.0_141/bin/
+    - export PATH=$PATH:/depends/thirdparty/apache-maven-3.6.3/bin/:/depends/thirdparty/jdk1.8.0_141/bin/:/depends/thirdparty/bin/:/opt/rh/devtoolset-7/root/usr/bin/
 
 stages:
     - build
