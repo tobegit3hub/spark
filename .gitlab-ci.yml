@@ -10,6 +10,9 @@ stages:
 
 build_spark:
     stage: build
+    except:
+        variables:
+            - $ENV_BUILD == "daily"
     script:
         - mvn clean package -DskipTests -Dscalatest.skip=true -Dwagon.skip=true -Dmaven.test.skip=true
 
