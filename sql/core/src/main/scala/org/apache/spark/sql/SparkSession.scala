@@ -49,6 +49,7 @@ import org.apache.spark.sql.types.{DataType, StructType}
 import org.apache.spark.sql.util.ExecutionListenerManager
 import org.apache.spark.util.{CallSite, Utils}
 import com._4paradigm.fesql.offline.api.FesqlSession
+import com._4paradigm.fesql.common.UnsupportedFesqlException
 
 /**
  * The entry point to programming Spark with the Dataset and DataFrame API.
@@ -615,8 +616,8 @@ class SparkSession private(
       try {
         fesqlSession.sql(sqlText).getSparkDf()
       } catch {
-        case e: Exception => {
-          logWarning(s"Fail to run with FESQL, fallback to SparkSQL")
+        case e: UnsupportedFesqlException => {
+          logWarning(s"Unsupported SQL for FESQL and fallback to SparkSQL, message: " + e.getMessage)
           sparksql(sqlText)
         }
       }
