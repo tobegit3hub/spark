@@ -614,7 +614,7 @@ class SparkSession private(
       sparksql(sqlText)
     } else {
       try {
-        fesqlSession.sql(sqlText).getSparkDf()
+        fesqlSession.fesql(sqlText).getSparkDf()
       } catch {
         case e: UnsupportedFesqlException => {
           logWarning(s"Unsupported SQL for FESQL and fallback to SparkSQL, message: " + e.getMessage)
