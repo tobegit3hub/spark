@@ -617,8 +617,14 @@ class SparkSession private(
         fesqlSession.fesql(sqlText).getSparkDf()
       } catch {
         case e: UnsupportedFesqlException => {
-          logWarning(s"Unsupported SQL for FESQL and fallback to SparkSQL, message: " + e.getMessage)
-          sparksql(sqlText)
+          val disableFallback = scala.util.Properties.envOrElse("DISABLE_FESQL_FALLBACK", "false")
+          if (disableFallback.toLowerCase().equals("true")) {
+            logWarning(s"Unsupported SQL for FESQL and disable fallback, message: " + e.getMessage)
+            throw new RuntimeException(e.getMessage);
+          } else {
+            logWarning(s"Unsupported SQL for FESQL and fallback to SparkSQL, message: " + e.getMessage)
+            sparksql(sqlText)
+          }
         }
       }
     }
