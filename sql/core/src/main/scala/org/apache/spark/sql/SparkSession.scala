@@ -48,7 +48,7 @@ import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types.{DataType, StructType}
 import org.apache.spark.sql.util.ExecutionListenerManager
 import org.apache.spark.util.{CallSite, Utils}
-import com._4paradigm.fesql.offline.api.FesqlSession
+import com._4paradigm.fesql.spark.api.FesqlSession
 import com._4paradigm.fesql.common.UnsupportedFesqlException
 
 /**
