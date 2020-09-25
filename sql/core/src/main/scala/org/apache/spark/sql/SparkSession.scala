@@ -114,7 +114,12 @@ class SparkSession private(
    *
    * @since 2.0.0
    */
-  def version: String = SPARK_VERSION
+  def version: String = {
+    // Add by 4paradigm to print FESQL library version
+    fesqlSession.version()
+
+    SPARK_VERSION
+  }
 
   /* ----------------------- *
    |  Session-related state  |
