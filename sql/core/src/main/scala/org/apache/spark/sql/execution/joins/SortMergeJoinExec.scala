@@ -75,6 +75,9 @@ case class SortMergeJoinExec(
         left.output ++ right.output
       case LeftOuter =>
         left.output ++ right.output.map(_.withNullability(true))
+      // Add by 4Paradigm
+      case LastJoinType =>
+        left.output ++ right.output.map(_.withNullability(true))
       case RightOuter =>
         left.output.map(_.withNullability(true)) ++ right.output
       case FullOuter =>
@@ -94,6 +97,8 @@ case class SortMergeJoinExec(
       PartitioningCollection(Seq(left.outputPartitioning, right.outputPartitioning))
     // For left and right outer joins, the output is partitioned by the streamed input's join keys.
     case LeftOuter => left.outputPartitioning
+    // Add by 4Paradigm
+    case LastJoinType => left.outputPartitioning
     case RightOuter => right.outputPartitioning
     case FullOuter => UnknownPartitioning(left.outputPartitioning.numPartitions)
     case LeftExistence(_) => left.outputPartitioning
@@ -124,6 +129,8 @@ case class SortMergeJoinExec(
       }
     // For left and right outer joins, the output is ordered by the streamed input's join keys.
     case LeftOuter => getKeyOrdering(leftKeys, left.outputOrdering)
+    // Add by 4Paradigm
+    case LastJoinType => getKeyOrdering(leftKeys, left.outputOrdering)
     case RightOuter => getKeyOrdering(rightKeys, right.outputOrdering)
     // There are null rows in both streams, so there is no order.
     case FullOuter => Nil

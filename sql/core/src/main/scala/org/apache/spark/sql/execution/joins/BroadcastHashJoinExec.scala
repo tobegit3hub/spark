@@ -75,7 +75,8 @@ case class BroadcastHashJoinExec(
   }
 
   private def multipleOutputForOneInput: Boolean = joinType match {
-    case _: InnerLike | LeftOuter | RightOuter =>
+    // Add by 4Paradigm
+    case _: InnerLike | LeftOuter | RightOuter | LastJoinType =>
       // For inner and outer joins, one row from the streamed side may produce multiple result rows,
       // if the build side has duplicated keys. Note that here we wait for the broadcast to be
       // finished, which is a no-op because it's already finished when we wait it in `doProduce`.
@@ -99,6 +100,8 @@ case class BroadcastHashJoinExec(
     joinType match {
       case _: InnerLike => codegenInner(ctx, input)
       case LeftOuter | RightOuter => codegenOuter(ctx, input)
+      // Add by 4Paradigm
+      case LastJoinType => codegenOuter(ctx, input, true)
       case LeftSemi => codegenSemi(ctx, input)
       case LeftAnti => codegenAnti(ctx, input)
       case j: ExistenceJoin => codegenExistence(ctx, input)
@@ -254,7 +257,7 @@ case class BroadcastHashJoinExec(
   /**
    * Generates the code for left or right outer join.
    */
-  private def codegenOuter(ctx: CodegenContext, input: Seq[ExprCode]): String = {
+  private def codegenOuter(ctx: CodegenContext, input: Seq[ExprCode], isLastJoin: Boolean = false): String = {
     val (broadcastRelation, relationTerm) = prepareBroadcast(ctx)
     val (keyEv, anyNull) = genStreamSideJoinKey(ctx, input)
     val matched = ctx.freshName("matched")
@@ -306,24 +309,48 @@ case class BroadcastHashJoinExec(
       val matches = ctx.freshName("matches")
       val iteratorCls = classOf[Iterator[UnsafeRow]].getName
       val found = ctx.freshName("found")
-      s"""
-         |// generate join key for stream side
-         |${keyEv.code}
-         |// find matches from HashRelation
-         |$iteratorCls $matches = $anyNull ? null : ($iteratorCls)$relationTerm.get(${keyEv.value});
-         |boolean $found = false;
-         |// the last iteration of this loop is to emit an empty row if there is no matched rows.
-         |while ($matches != null && $matches.hasNext() || !$found) {
-         |  UnsafeRow $matched = $matches != null && $matches.hasNext() ?
-         |    (UnsafeRow) $matches.next() : null;
-         |  ${checkCondition.trim}
-         |  if ($conditionPassed) {
-         |    $found = true;
-         |    $numOutput.add(1);
-         |    ${consume(ctx, resultVars)}
-         |  }
-         |}
+
+      // Add by 4Paradigm
+      if (isLastJoin) {
+        s"""
+           |// generate join key for stream side
+           |${keyEv.code}
+           |// find matches from HashRelation
+           |$iteratorCls $matches = $anyNull ? null : ($iteratorCls)$relationTerm.get(${keyEv.value});
+           |boolean $found = false;
+           |// the last iteration of this loop is to emit an empty row if there is no matched rows.
+           |if ($matches != null && $matches.hasNext() || !$found) {
+           |  UnsafeRow $matched = $matches != null && $matches.hasNext() ?
+           |    (UnsafeRow) $matches.next() : null;
+           |  ${checkCondition.trim}
+           |  if ($conditionPassed) {
+           |    $found = true;
+           |    $numOutput.add(1);
+           |    ${consume(ctx, resultVars)}
+           |  }
+           |}
        """.stripMargin
+      } else {
+        s"""
+           |// generate join key for stream side
+           |${keyEv.code}
+           |// find matches from HashRelation
+           |$iteratorCls $matches = $anyNull ? null : ($iteratorCls)$relationTerm.get(${keyEv.value});
+           |boolean $found = false;
+           |// the last iteration of this loop is to emit an empty row if there is no matched rows.
+           |while ($matches != null && $matches.hasNext() || !$found) {
+           |  UnsafeRow $matched = $matches != null && $matches.hasNext() ?
+           |    (UnsafeRow) $matches.next() : null;
+           |  ${checkCondition.trim}
+           |  if ($conditionPassed) {
+           |    $found = true;
+           |    $numOutput.add(1);
+           |    ${consume(ctx, resultVars)}
+           |  }
+           |}
+       """.stripMargin
+      }
+
     }
   }
 

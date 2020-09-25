@@ -61,6 +61,9 @@ trait HashJoin {
         left.output ++ right.output
       case LeftOuter =>
         left.output ++ right.output.map(_.withNullability(true))
+      // Add by 4Paradigm
+      case LastJoinType =>
+        left.output ++ right.output.map(_.withNullability(true))
       case RightOuter =>
         left.output.map(_.withNullability(true)) ++ right.output
       case j: ExistenceJoin =>

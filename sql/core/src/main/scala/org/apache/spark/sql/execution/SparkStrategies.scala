@@ -166,7 +166,8 @@ abstract class SparkStrategies extends QueryPlanner[SparkPlan] {
     }
 
     private def canBuildRight(joinType: JoinType): Boolean = joinType match {
-      case _: InnerLike | LeftOuter | LeftSemi | LeftAnti | _: ExistenceJoin => true
+      // Add by 4Paradigm
+      case _: InnerLike | LeftOuter | LeftSemi | LeftAnti | _: ExistenceJoin | LastJoinType => true
       case _ => false
     }
 
