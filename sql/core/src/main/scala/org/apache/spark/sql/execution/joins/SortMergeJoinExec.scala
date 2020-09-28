@@ -264,6 +264,23 @@ case class SortMergeJoinExec(
           new LeftOuterIterator(
             smjScanner, rightNullRow, boundCondition, resultProj, numOutputRows).toScala
 
+        // Add by 4Paradigm
+        case LastJoinType =>
+          val smjScanner = new SortMergeJoinScanner(
+            streamedKeyGenerator = createLeftKeyGenerator(),
+            bufferedKeyGenerator = createRightKeyGenerator(),
+            keyOrdering,
+            streamedIter = RowIterator.fromScala(leftIter),
+            bufferedIter = RowIterator.fromScala(rightIter),
+            inMemoryThreshold,
+            spillThreshold,
+            cleanupResources,
+            true
+          )
+          val rightNullRow = new GenericInternalRow(right.output.length)
+          new LeftOuterIterator(
+            smjScanner, rightNullRow, boundCondition, resultProj, numOutputRows).toScala
+
         case RightOuter =>
           val smjScanner = new SortMergeJoinScanner(
             streamedKeyGenerator = createRightKeyGenerator(),
@@ -719,7 +736,8 @@ private[joins] class SortMergeJoinScanner(
     bufferedIter: RowIterator,
     inMemoryThreshold: Int,
     spillThreshold: Int,
-    eagerCleanupResources: () => Unit) {
+    eagerCleanupResources: () => Unit,
+    isLastJoin: Boolean = false) {
   private[this] var streamedRow: InternalRow = _
   private[this] var streamedRowKey: InternalRow = _
   private[this] var bufferedRow: InternalRow = _
@@ -890,10 +908,18 @@ private[joins] class SortMergeJoinScanner(
     // This join key may have been produced by a mutable projection, so we need to make a copy:
     matchJoinKey = streamedRowKey.copy()
     bufferedMatches.clear()
-    do {
+
+    // Add by 4Paradigm
+    if (isLastJoin) {
       bufferedMatches.add(bufferedRow.asInstanceOf[UnsafeRow])
       advancedBufferedToRowWithNullFreeJoinKey()
-    } while (bufferedRow != null && keyOrdering.compare(streamedRowKey, bufferedRowKey) == 0)
+    } else {
+      do {
+        bufferedMatches.add(bufferedRow.asInstanceOf[UnsafeRow])
+        advancedBufferedToRowWithNullFreeJoinKey()
+      } while (bufferedRow != null && keyOrdering.compare(streamedRowKey, bufferedRowKey) == 0)
+    }
+
   }
 }
 
