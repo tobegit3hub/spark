@@ -2987,6 +2987,9 @@ class Analyzer(
     val projectList = joinType match {
       case LeftOuter =>
         leftKeys ++ lUniqueOutput ++ rUniqueOutput.map(_.withNullability(true))
+      // Add by 4Paradigm
+      case LastJoinType =>
+        leftKeys ++ lUniqueOutput ++ rUniqueOutput.map(_.withNullability(true))
       case LeftExistence(_) =>
         leftKeys ++ lUniqueOutput
       case RightOuter =>

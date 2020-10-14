@@ -75,6 +75,9 @@ case class SortMergeJoinExec(
         left.output ++ right.output
       case LeftOuter =>
         left.output ++ right.output.map(_.withNullability(true))
+      // Add by 4Paradigm
+      case LastJoinType =>
+        left.output ++ right.output.map(_.withNullability(true))
       case RightOuter =>
         left.output.map(_.withNullability(true)) ++ right.output
       case FullOuter =>
@@ -94,6 +97,8 @@ case class SortMergeJoinExec(
       PartitioningCollection(Seq(left.outputPartitioning, right.outputPartitioning))
     // For left and right outer joins, the output is partitioned by the streamed input's join keys.
     case LeftOuter => left.outputPartitioning
+    // Add by 4Paradigm
+    case LastJoinType => left.outputPartitioning
     case RightOuter => right.outputPartitioning
     case FullOuter => UnknownPartitioning(left.outputPartitioning.numPartitions)
     case LeftExistence(_) => left.outputPartitioning
@@ -124,6 +129,8 @@ case class SortMergeJoinExec(
       }
     // For left and right outer joins, the output is ordered by the streamed input's join keys.
     case LeftOuter => getKeyOrdering(leftKeys, left.outputOrdering)
+    // Add by 4Paradigm
+    case LastJoinType => getKeyOrdering(leftKeys, left.outputOrdering)
     case RightOuter => getKeyOrdering(rightKeys, right.outputOrdering)
     // There are null rows in both streams, so there is no order.
     case FullOuter => Nil
@@ -252,6 +259,23 @@ case class SortMergeJoinExec(
             inMemoryThreshold,
             spillThreshold,
             cleanupResources
+          )
+          val rightNullRow = new GenericInternalRow(right.output.length)
+          new LeftOuterIterator(
+            smjScanner, rightNullRow, boundCondition, resultProj, numOutputRows).toScala
+
+        // Add by 4Paradigm
+        case LastJoinType =>
+          val smjScanner = new SortMergeJoinScanner(
+            streamedKeyGenerator = createLeftKeyGenerator(),
+            bufferedKeyGenerator = createRightKeyGenerator(),
+            keyOrdering,
+            streamedIter = RowIterator.fromScala(leftIter),
+            bufferedIter = RowIterator.fromScala(rightIter),
+            inMemoryThreshold,
+            spillThreshold,
+            cleanupResources,
+            true
           )
           val rightNullRow = new GenericInternalRow(right.output.length)
           new LeftOuterIterator(
@@ -712,7 +736,8 @@ private[joins] class SortMergeJoinScanner(
     bufferedIter: RowIterator,
     inMemoryThreshold: Int,
     spillThreshold: Int,
-    eagerCleanupResources: () => Unit) {
+    eagerCleanupResources: () => Unit,
+    isLastJoin: Boolean = false) {
   private[this] var streamedRow: InternalRow = _
   private[this] var streamedRowKey: InternalRow = _
   private[this] var bufferedRow: InternalRow = _
@@ -883,10 +908,18 @@ private[joins] class SortMergeJoinScanner(
     // This join key may have been produced by a mutable projection, so we need to make a copy:
     matchJoinKey = streamedRowKey.copy()
     bufferedMatches.clear()
-    do {
+
+    // Add by 4Paradigm
+    if (isLastJoin) {
       bufferedMatches.add(bufferedRow.asInstanceOf[UnsafeRow])
       advancedBufferedToRowWithNullFreeJoinKey()
-    } while (bufferedRow != null && keyOrdering.compare(streamedRowKey, bufferedRowKey) == 0)
+    } else {
+      do {
+        bufferedMatches.add(bufferedRow.asInstanceOf[UnsafeRow])
+        advancedBufferedToRowWithNullFreeJoinKey()
+      } while (bufferedRow != null && keyOrdering.compare(streamedRowKey, bufferedRowKey) == 0)
+    }
+
   }
 }
 

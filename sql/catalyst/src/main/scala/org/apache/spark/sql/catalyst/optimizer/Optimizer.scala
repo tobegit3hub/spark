@@ -1373,7 +1373,8 @@ object PushPredicateThroughJoin extends Rule[LogicalPlan] with PredicateHelper {
           val newJoinCond = (rightJoinConditions ++ commonJoinCondition).reduceLeftOption(And)
 
           Join(newLeft, newRight, RightOuter, newJoinCond, hint)
-        case LeftOuter | LeftAnti | ExistenceJoin(_) =>
+        // Add by 4Paradigm
+        case LeftOuter | LeftAnti | ExistenceJoin(_) | LastJoinType =>
           // push down the right side only join filter for right sub query
           val newLeft = left
           val newRight = rightJoinConditions.

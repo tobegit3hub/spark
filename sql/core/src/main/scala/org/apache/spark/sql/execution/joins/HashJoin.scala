@@ -61,6 +61,9 @@ trait HashJoin {
         left.output ++ right.output
       case LeftOuter =>
         left.output ++ right.output.map(_.withNullability(true))
+      // Add by 4Paradigm
+      case LastJoinType =>
+        left.output ++ right.output.map(_.withNullability(true))
       case RightOuter =>
         left.output.map(_.withNullability(true)) ++ right.output
       case j: ExistenceJoin =>
@@ -132,7 +135,8 @@ trait HashJoin {
 
   private def outerJoin(
       streamedIter: Iterator[InternalRow],
-    hashedRelation: HashedRelation): Iterator[InternalRow] = {
+    hashedRelation: HashedRelation,
+    isLastJoin: Boolean = false): Iterator[InternalRow] = {
     val joinedRow = new JoinedRow()
     val keyGenerator = streamSideKeyGenerator()
     val nullRow = new GenericInternalRow(buildPlan.output.length)
@@ -144,13 +148,31 @@ trait HashJoin {
       new RowIterator {
         private var found = false
         override def advanceNext(): Boolean = {
-          while (buildIter != null && buildIter.hasNext) {
-            val nextBuildRow = buildIter.next()
-            if (boundCondition(joinedRow.withRight(nextBuildRow))) {
-              found = true
-              return true
+
+          // Add by 4Paradigm to support last join
+          if (isLastJoin && found) {
+            return false
+          }
+
+          // Add by 4Paradigm to support last join
+          if (isLastJoin) {
+            if (buildIter != null && buildIter.hasNext) {
+              val nextBuildRow = buildIter.next()
+              if (boundCondition(joinedRow.withRight(nextBuildRow))) {
+                found = true
+                return true
+              }
+            }
+          } else {
+            while (buildIter != null && buildIter.hasNext) {
+              val nextBuildRow = buildIter.next()
+              if (boundCondition(joinedRow.withRight(nextBuildRow))) {
+                found = true
+                return true
+              }
             }
           }
+
           if (!found) {
             joinedRow.withRight(nullRow)
             found = true
@@ -218,6 +240,9 @@ trait HashJoin {
         innerJoin(streamedIter, hashed)
       case LeftOuter | RightOuter =>
         outerJoin(streamedIter, hashed)
+      case LastJoinType =>
+        // Add by 4Paradigm
+        outerJoin(streamedIter, hashed, true)
       case LeftSemi =>
         semiJoin(streamedIter, hashed)
       case LeftAnti =>

@@ -326,6 +326,9 @@ case class Join(
         left.output
       case LeftOuter =>
         left.output ++ right.output.map(_.withNullability(true))
+      // Add by 4Paradigm
+      case LastJoinType =>
+        left.output ++ right.output.map(_.withNullability(true))
       case RightOuter =>
         left.output.map(_.withNullability(true)) ++ right.output
       case FullOuter =>
@@ -351,6 +354,9 @@ case class Join(
       case LeftExistence(_) =>
         left.constraints
       case LeftOuter =>
+        left.constraints
+      // Add by 4Paradigm
+      case LastJoinType =>
         left.constraints
       case RightOuter =>
         right.constraints
