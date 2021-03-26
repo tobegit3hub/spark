@@ -48,8 +48,8 @@ import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types.{DataType, StructType}
 import org.apache.spark.sql.util.ExecutionListenerManager
 import org.apache.spark.util.{CallSite, Utils}
-import com._4paradigm.fesql.spark.api.FesqlSession
-import com._4paradigm.fesql.common.UnsupportedFesqlException
+import com._4paradigm.hybridse.spark.api.NativeSession
+import com._4paradigm.hybridse.common.UnsupportedHybridSEException
 
 /**
  * The entry point to programming Spark with the Dataset and DataFrame API.
@@ -115,8 +115,8 @@ class SparkSession private(
    * @since 2.0.0
    */
   def version: String = {
-    // Add by 4paradigm to print FESQL library version
-    fesqlSession.version()
+    // Add by 4paradigm to print NativeSpark library version
+    nativeSession.version()
 
     SPARK_VERSION
   }
@@ -177,10 +177,10 @@ class SparkSession private(
   val sqlContext: SQLContext = new SQLContext(this)
 
   /**
-   * Add by 4paradigm to support FESQL native execution engine.
+   * Add by 4paradigm to support native execution engine.
    */
   @transient
-  val fesqlSession: FesqlSession = new FesqlSession(this)
+  val nativeSession: NativeSession = new NativeSession(this)
 
   /**
    * Runtime configuration interface for Spark.
@@ -612,22 +612,22 @@ class SparkSession private(
    * @since 2.0.0
    */
   def sql(sqlText: String): DataFrame = withActive {
-    // Modify by 4paradigm to support FESQL and may fallback to SparkSQL
-    val disableFesql = scala.util.Properties.envOrElse("DISABLE_FESQL", "false")
-    if (disableFesql.toLowerCase().equals("true")) {
-      logInfo("FESQL is disable and run SparkSQL")
+    // Modify by 4paradigm to support Native Spark and fallback to SparkSQL
+    val disableNativeSpark = scala.util.Properties.envOrElse("DISABLE_NATIVE_SPARK", "false")
+    if (disableNativeSpark.toLowerCase().equals("true")) {
+      logInfo("NativeSpark is disable and fallback to run SparkSQL")
       sparksql(sqlText)
     } else {
       try {
-        fesqlSession.fesql(sqlText).getSparkDf()
+        nativeSession.nativeSparkSql(sqlText).getSparkDf()
       } catch {
-        case e: UnsupportedFesqlException => {
-          val disableFallback = scala.util.Properties.envOrElse("DISABLE_FESQL_FALLBACK", "false")
+        case e: UnsupportedHybridSEException => {
+          val disableFallback = scala.util.Properties.envOrElse("DISABLE_NATIVE_SPARK_FALLBACK", "false")
           if (disableFallback.toLowerCase().equals("true")) {
-            logWarning(s"Unsupported SQL for FESQL and disable fallback, message: " + e.getMessage)
+            logWarning(s"Unsupported SQL for NativeSpark and disable fallback, message: " + e.getMessage)
             throw new RuntimeException(e.getMessage);
           } else {
-            logWarning(s"Unsupported SQL for FESQL and fallback to SparkSQL, message: " + e.getMessage)
+            logWarning(s"Unsupported SQL for NativeSpark and fallback to SparkSQL, message: " + e.getMessage)
             sparksql(sqlText)
           }
         }

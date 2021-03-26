@@ -3244,8 +3244,6 @@ class Dataset[T] private[sql](
     createTempViewCommand(viewName, replace = false, global = false)
   }
 
-
-
   /**
    * Creates a local temporary view using the given name. The lifetime of this
    * temporary view is tied to the [[SparkSession]] that was used to create this Dataset.
@@ -3254,8 +3252,8 @@ class Dataset[T] private[sql](
    * @since 2.0.0
    */
   def createOrReplaceTempView(viewName: String): Unit = withPlan {
-    // Modify by 4paradigm to support FESQL native execution engine
-    sparkSession.fesqlSession.registerTable(viewName, this.asInstanceOf[DataFrame])
+    // Add by 4paradigm to register tables for SQL
+    sparkSession.nativeSession.registerTable(viewName, this.asInstanceOf[DataFrame])
 
     createTempViewCommand(viewName, replace = true, global = false)
   }

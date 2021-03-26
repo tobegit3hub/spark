@@ -160,11 +160,16 @@
       <artifactId>selenium-htmlunit-driver</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- 4paradigm FESQL -->
+    <!-- 4paradigm -->
     <dependency>
-      <groupId>com._4paradigm.fesql</groupId>
-      <artifactId>fesql-spark</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <groupId>com._4paradigm.hybridse</groupId>
+      <artifactId>hybridse-native</artifactId>
+      <version>0.1.0-SNAPSHOT-allinone</version>
+    </dependency>
+    <dependency>
+      <groupId>com._4paradigm.hybridse</groupId>
+      <artifactId>native-spark</artifactId>
+      <version>0.1.0-SNAPSHOT-allinone</version>
     </dependency>
   </dependencies>
   <build>
