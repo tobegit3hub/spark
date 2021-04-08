@@ -167,8 +167,8 @@
       <version>0.1.0-SNAPSHOT-allinone</version>
     </dependency>
     <dependency>
-      <groupId>com._4paradigm.hybridse</groupId>
-      <artifactId>native-spark</artifactId>
+      <groupId>com._4paradigm.hybridsql</groupId>
+      <artifactId>sparkfe</artifactId>
       <version>0.1.0-SNAPSHOT-allinone</version>
     </dependency>
   </dependencies>

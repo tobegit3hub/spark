@@ -3253,7 +3253,7 @@ class Dataset[T] private[sql](
    */
   def createOrReplaceTempView(viewName: String): Unit = withPlan {
     // Add by 4paradigm to register tables for SQL
-    sparkSession.nativeSession.registerTable(viewName, this.asInstanceOf[DataFrame])
+    sparkSession.sparkFeSession.registerTable(viewName, this.asInstanceOf[DataFrame])
 
     createTempViewCommand(viewName, replace = true, global = false)
   }

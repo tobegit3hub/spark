@@ -48,7 +48,7 @@ import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types.{DataType, StructType}
 import org.apache.spark.sql.util.ExecutionListenerManager
 import org.apache.spark.util.{CallSite, Utils}
-import com._4paradigm.hybridse.spark.api.NativeSession
+import com._4paradigm.hybridsql.spark.api.SparkFeSession
 import com._4paradigm.hybridse.common.UnsupportedHybridSEException
 
 /**
@@ -115,8 +115,8 @@ class SparkSession private(
    * @since 2.0.0
    */
   def version: String = {
-    // Add by 4paradigm to print NativeSpark library version
-    nativeSession.version()
+    // Add by 4paradigm to print SparkFE library version
+    sparkFeSession.version()
 
     SPARK_VERSION
   }
@@ -180,7 +180,7 @@ class SparkSession private(
    * Add by 4paradigm to support native execution engine.
    */
   @transient
-  val nativeSession: NativeSession = new NativeSession(this)
+  val sparkFeSession: SparkFeSession = new SparkFeSession(this)
 
   /**
    * Runtime configuration interface for Spark.
@@ -612,22 +612,22 @@ class SparkSession private(
    * @since 2.0.0
    */
   def sql(sqlText: String): DataFrame = withActive {
-    // Modify by 4paradigm to support Native Spark and fallback to SparkSQL
-    val disableNativeSpark = scala.util.Properties.envOrElse("DISABLE_NATIVE_SPARK", "false")
-    if (disableNativeSpark.toLowerCase().equals("true")) {
-      logInfo("NativeSpark is disable and fallback to run SparkSQL")
+    // Modify by 4paradigm to support SparkFE and fallback to SparkSQL
+    val disableSparkFe = scala.util.Properties.envOrElse("DISABLE_NATIVE_SPARK", "false")
+    if (disableSparkFe.toLowerCase().equals("true")) {
+      logInfo("SparkFE is disable and fallback to run SparkSQL")
       sparksql(sqlText)
     } else {
       try {
-        nativeSession.nativeSparkSql(sqlText).getSparkDf()
+        sparkFeSession.sparkFeSql(sqlText).getSparkDf()
       } catch {
         case e: UnsupportedHybridSEException => {
           val disableFallback = scala.util.Properties.envOrElse("DISABLE_NATIVE_SPARK_FALLBACK", "false")
           if (disableFallback.toLowerCase().equals("true")) {
-            logWarning(s"Unsupported SQL for NativeSpark and disable fallback, message: " + e.getMessage)
+            logWarning(s"Unsupported SQL for SparkFE and disable fallback, message: " + e.getMessage)
             throw new RuntimeException(e.getMessage);
           } else {
-            logWarning(s"Unsupported SQL for NativeSpark and fallback to SparkSQL, message: " + e.getMessage)
+            logWarning(s"Unsupported SQL for SparkFE and fallback to SparkSQL, message: " + e.getMessage)
             sparksql(sqlText)
           }
         }
