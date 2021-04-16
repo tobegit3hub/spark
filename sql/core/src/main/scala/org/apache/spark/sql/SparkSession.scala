@@ -49,7 +49,7 @@ import org.apache.spark.sql.types.{DataType, StructType}
 import org.apache.spark.sql.util.ExecutionListenerManager
 import org.apache.spark.util.{CallSite, Utils}
 import com._4paradigm.hybridsql.spark.api.SparkFeSession
-import com._4paradigm.hybridse.common.UnsupportedHybridSEException
+import com._4paradigm.hybridse.sdk.UnsupportedHybridSeException
 
 /**
  * The entry point to programming Spark with the Dataset and DataFrame API.
@@ -613,7 +613,7 @@ class SparkSession private(
    */
   def sql(sqlText: String): DataFrame = withActive {
     // Modify by 4paradigm to support SparkFE and fallback to SparkSQL
-    val disableSparkFe = scala.util.Properties.envOrElse("DISABLE_NATIVE_SPARK", "false")
+    val disableSparkFe = scala.util.Properties.envOrElse("DISABLE_SPARKFE", "false")
     if (disableSparkFe.toLowerCase().equals("true")) {
       logInfo("SparkFE is disable and fallback to run SparkSQL")
       sparksql(sqlText)
@@ -621,8 +621,8 @@ class SparkSession private(
       try {
         sparkFeSession.sparkFeSql(sqlText).getSparkDf()
       } catch {
-        case e: UnsupportedHybridSEException => {
-          val disableFallback = scala.util.Properties.envOrElse("DISABLE_NATIVE_SPARK_FALLBACK", "false")
+        case e: UnsupportedHybridSeException => {
+          val disableFallback = scala.util.Properties.envOrElse("DISABLE_SPARKFE_FALLBACK", "false")
           if (disableFallback.toLowerCase().equals("true")) {
             logWarning(s"Unsupported SQL for SparkFE and disable fallback, message: " + e.getMessage)
             throw new RuntimeException(e.getMessage);
