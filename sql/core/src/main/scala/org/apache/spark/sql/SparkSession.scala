@@ -48,7 +48,7 @@ import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types.{DataType, StructType}
 import org.apache.spark.sql.util.ExecutionListenerManager
 import org.apache.spark.util.{CallSite, Utils}
-import com._4paradigm.hybridsql.spark.api.SparkFeSession
+import com._4paradigm.hybridsql.sparkfe.api.SparkFeSession
 import com._4paradigm.hybridse.sdk.UnsupportedHybridSeException
 
 /**

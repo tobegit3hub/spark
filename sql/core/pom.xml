@@ -162,14 +162,14 @@
     </dependency>
     <!-- 4paradigm -->
     <dependency>
-      <groupId>com._4paradigm.hybridse</groupId>
+      <groupId>com.4paradigm.hybridse</groupId>
       <artifactId>hybridse-native</artifactId>
-      <version>0.1.1-allinone</version>
+      <version>0.1.3-allinone</version>
     </dependency>
     <dependency>
-      <groupId>com._4paradigm.hybridsql</groupId>
+      <groupId>com.4paradigm.hybridsql</groupId>
       <artifactId>sparkfe</artifactId>
-      <version>0.1.1-allinone</version>
+      <version>0.1.2-allinone-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>
@@ -252,12 +252,4 @@
       </dependencies>
     </profile>
   </profiles>
-  <!-- 4paradigm -->
-  <repositories>
-    <repository>
-      <id>4paradigm-github</id>
-      <name>4Paradigm-github-maven-repository</name>
-      <url>http://103.3.60.66:8001/</url>
-    </repository>
-  </repositories>
 </project>
