@@ -48,8 +48,8 @@ import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types.{DataType, StructType}
 import org.apache.spark.sql.util.ExecutionListenerManager
 import org.apache.spark.util.{CallSite, Utils}
-import com._4paradigm.hybridse.spark.api.NativeSession
-import com._4paradigm.hybridse.common.UnsupportedHybridSEException
+import com._4paradigm.openmldb.batch.api.OpenmldbSession
+import com._4paradigm.hybridse.sdk.UnsupportedHybridSeException
 
 /**
  * The entry point to programming Spark with the Dataset and DataFrame API.
@@ -115,8 +115,8 @@ class SparkSession private(
    * @since 2.0.0
    */
   def version: String = {
-    // Add by 4paradigm to print NativeSpark library version
-    nativeSession.version()
+    // Add by 4paradigm to print library version
+    openmldbSession.version()
 
     SPARK_VERSION
   }
@@ -180,7 +180,7 @@ class SparkSession private(
    * Add by 4paradigm to support native execution engine.
    */
   @transient
-  val nativeSession: NativeSession = new NativeSession(this)
+  val openmldbSession: OpenmldbSession = new OpenmldbSession(this)
 
   /**
    * Runtime configuration interface for Spark.
@@ -612,22 +612,22 @@ class SparkSession private(
    * @since 2.0.0
    */
   def sql(sqlText: String): DataFrame = withActive {
-    // Modify by 4paradigm to support Native Spark and fallback to SparkSQL
-    val disableNativeSpark = scala.util.Properties.envOrElse("DISABLE_NATIVE_SPARK", "false")
-    if (disableNativeSpark.toLowerCase().equals("true")) {
-      logInfo("NativeSpark is disable and fallback to run SparkSQL")
+    // Modify by 4paradigm to support OpenMLDB and fallback to SparkSQL
+    val disableOpenmldb = scala.util.Properties.envOrElse("DISABLE_OPENMLDB", "false")
+    if (disableOpenmldb.toLowerCase().equals("true")) {
+      logInfo("OpenMLDB is disable and fallback to run SparkSQL")
       sparksql(sqlText)
     } else {
       try {
-        nativeSession.nativeSparkSql(sqlText).getSparkDf()
+        openmldbSession.openmldbSql(sqlText).getSparkDf()
       } catch {
-        case e: UnsupportedHybridSEException => {
-          val disableFallback = scala.util.Properties.envOrElse("DISABLE_NATIVE_SPARK_FALLBACK", "false")
+        case e: UnsupportedHybridSeException => {
+          val disableFallback = scala.util.Properties.envOrElse("DISABLE_OPENMLDB_FALLBACK", "false")
           if (disableFallback.toLowerCase().equals("true")) {
-            logWarning(s"Unsupported SQL for NativeSpark and disable fallback, message: " + e.getMessage)
+            logWarning(s"Unsupported SQL for OpenMLDB and disable fallback, message: " + e.getMessage)
             throw new RuntimeException(e.getMessage);
           } else {
-            logWarning(s"Unsupported SQL for NativeSpark and fallback to SparkSQL, message: " + e.getMessage)
+            logWarning(s"Unsupported SQL for OpenMLDB and fallback to SparkSQL, message: " + e.getMessage)
             sparksql(sqlText)
           }
         }

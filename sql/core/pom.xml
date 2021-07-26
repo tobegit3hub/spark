@@ -162,14 +162,14 @@
     </dependency>
     <!-- 4paradigm -->
     <dependency>
-      <groupId>com._4paradigm.hybridse</groupId>
+      <groupId>com.4paradigm.hybridse</groupId>
       <artifactId>hybridse-native</artifactId>
-      <version>0.1.0-SNAPSHOT-allinone</version>
+      <version>0.1.5-allinone</version>
     </dependency>
     <dependency>
-      <groupId>com._4paradigm.hybridse</groupId>
-      <artifactId>native-spark</artifactId>
-      <version>0.1.0-SNAPSHOT-allinone</version>
+      <groupId>com.4paradigm.openmldb</groupId>
+      <artifactId>openmldb-batch</artifactId>
+      <version>0.1.5-allinone-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>
