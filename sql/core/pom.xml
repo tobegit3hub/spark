@@ -260,9 +260,6 @@
     <!-- 4paradigm -->
     <profile>
       <id>linux</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
       <properties>
         <openmldb.version>${default.openmldb.version}</openmldb.version>
         <hybridse.version>${default.hybridse.sdk.version}</hybridse.version>
