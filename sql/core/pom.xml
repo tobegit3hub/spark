@@ -35,8 +35,6 @@
     <!-- 4paradigm -->
     <default.openmldb.version>0.1.5</default.openmldb.version>
     <default.hybridse.sdk.version>0.1.5</default.hybridse.sdk.version>
-    <openmldb.version>${default.openmldb.version}</openmldb.version>
-    <hybridse.version>${default.hybridse.sdk.version}</hybridse.version>
   </properties>
 
   <dependencies>
@@ -260,6 +258,9 @@
     <!-- 4paradigm -->
     <profile>
       <id>linux</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <openmldb.version>${default.openmldb.version}</openmldb.version>
         <hybridse.version>${default.hybridse.sdk.version}</hybridse.version>
