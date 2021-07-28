@@ -167,12 +167,12 @@
     <dependency>
       <groupId>com.4paradigm.hybridse</groupId>
       <artifactId>hybridse-native</artifactId>
-      <version>${hybridse.version}</version>
+      <version>${hybridse.native.version}</version>
     </dependency>
     <dependency>
       <groupId>com.4paradigm.openmldb</groupId>
       <artifactId>openmldb-batch</artifactId>
-      <version>${openmldb.version}</version>
+      <version>${openmldb.batch.version}</version>
     </dependency>
   </dependencies>
   <build>
