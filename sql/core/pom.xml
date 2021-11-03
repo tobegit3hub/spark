@@ -32,6 +32,9 @@
   <url>http://spark.apache.org/</url>
   <properties>
     <sbt.project.name>sql</sbt.project.name>
+    <!-- 4paradigm -->
+    <default.openmldb.batch.version>0.2.3</default.openmldb.batch.version>
+    <default.hybridse.native.version>0.2.3</default.hybridse.native.version>
   </properties>
 
   <dependencies>
@@ -164,12 +167,12 @@
     <dependency>
       <groupId>com.4paradigm.hybridse</groupId>
       <artifactId>hybridse-native</artifactId>
-      <version>0.2.3-allinone</version>
+      <version>${hybridse.native.version}</version>
     </dependency>
     <dependency>
       <groupId>com.4paradigm.openmldb</groupId>
       <artifactId>openmldb-batch</artifactId>
-      <version>0.2.3-allinone</version>
+      <version>${openmldb.batch.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -240,7 +243,7 @@
       </plugin>
     </plugins>
   </build>
-  
+
   <profiles>
     <profile>
       <id>scala-2.13</id>
@@ -251,5 +254,33 @@
         </dependency>
       </dependencies>
     </profile>
+
+    <!-- 4paradigm -->
+    <profile>
+      <id>linux</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <openmldb.batch.version>${default.openmldb.batch.version}</openmldb.batch.version>
+        <hybridse.native.version>${default.hybridse.native.version}</hybridse.native.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>macos</id>
+      <properties>
+        <openmldb.batch.version>${default.openmldb.batch.version}-macos</openmldb.batch.version>
+        <hybridse.native.version>${default.hybridse.native.version}-macos</hybridse.native.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>allinone</id>
+      <properties>
+        <openmldb.batch.version>${default.openmldb.batch.version}-allinone</openmldb.batch.version>
+        <hybridse.native.version>${default.hybridse.native.version}-allinone</hybridse.native.version>
+      </properties>
+    </profile>
+
+
   </profiles>
 </project>
