@@ -173,6 +173,16 @@
       <groupId>com.4paradigm.openmldb</groupId>
       <artifactId>openmldb-batch</artifactId>
       <version>${openmldb.batch.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>
