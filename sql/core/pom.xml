@@ -168,6 +168,12 @@
       <groupId>com.4paradigm.hybridse</groupId>
       <artifactId>hybridse-native</artifactId>
       <version>${hybridse.native.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.4paradigm.openmldb</groupId>
@@ -175,11 +181,7 @@
       <version>${openmldb.batch.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.spark</groupId>
+          <groupId>*</groupId>
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
@@ -272,21 +274,21 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <openmldb.batch.version>${default.openmldb.batch.version}</openmldb.batch.version>
+        <openmldb.batch.version>${default.openmldb.batch.version}-SNAPSHOT</openmldb.batch.version>
         <hybridse.native.version>${default.hybridse.native.version}</hybridse.native.version>
       </properties>
     </profile>
     <profile>
       <id>macos</id>
       <properties>
-        <openmldb.batch.version>${default.openmldb.batch.version}-macos</openmldb.batch.version>
+        <openmldb.batch.version>${default.openmldb.batch.version}-macos-SNAPSHOT</openmldb.batch.version>
         <hybridse.native.version>${default.hybridse.native.version}-macos</hybridse.native.version>
       </properties>
     </profile>
     <profile>
       <id>allinone</id>
       <properties>
-        <openmldb.batch.version>${default.openmldb.batch.version}-allinone</openmldb.batch.version>
+        <openmldb.batch.version>${default.openmldb.batch.version}-allinone-SNAPSHOT</openmldb.batch.version>
         <hybridse.native.version>${default.hybridse.native.version}-allinone</hybridse.native.version>
       </properties>
     </profile>
