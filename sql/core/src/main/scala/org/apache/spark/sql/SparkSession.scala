@@ -115,9 +115,6 @@ class SparkSession private(
    * @since 2.0.0
    */
   def version: String = {
-    // Add by 4paradigm to print library version
-    openmldbSession.version()
-
     SPARK_VERSION
   }
 
