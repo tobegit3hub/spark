@@ -33,7 +33,7 @@
   <properties>
     <sbt.project.name>sql</sbt.project.name>
     <!-- 4paradigm -->
-    <default.openmldb.batch.version>0.3.1</default.openmldb.batch.version>
+    <default.openmldb.batch.version>0.3.0</default.openmldb.batch.version>
     <default.hybridse.native.version>0.3.2</default.hybridse.native.version>
   </properties>
 
