@@ -31,4 +31,4 @@ jobs:
             ${{ runner.os }}-maven-
       - name: compile
         run: |
-          ./dev/make-distribution.sh --name openmldbspark --pip --tgz -Phadoop-2.7 -Pyarn -Pallinone
+          ./dev/make-distribution.sh --name openmldbspark --pip --tgz -Phadoop-2.7 -Pyarn
