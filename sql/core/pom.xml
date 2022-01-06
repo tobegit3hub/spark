@@ -32,8 +32,8 @@
   <url>http://spark.apache.org/</url>
   <properties>
     <sbt.project.name>sql</sbt.project.name>
-    <default.openmldb.batch.version>0.4.0-SNAPSHOT</default.openmldb.batch.version>
-    <default.hybridse.native.version>0.4.0-SNAPSHOT</default.hybridse.native.version>
+    <openmldb.batch.version>0.4.0-SNAPSHOT</openmldb.batch.version>
+    <default.openmldb.native.version>0.4.0-SNAPSHOT</default.openmldb.native.version>
   </properties>
 
   <dependencies>
@@ -164,9 +164,9 @@
     </dependency>
     <!-- 4paradigm -->
     <dependency>
-      <groupId>com.4paradigm.hybridse</groupId>
-      <artifactId>hybridse-native</artifactId>
-      <version>${hybridse.native.version}</version>
+      <groupId>com.4paradigm.openmldb</groupId>
+      <artifactId>openmldb-native</artifactId>
+      <version>${openmldb.native.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -273,40 +273,35 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <openmldb.batch.version>${default.openmldb.batch.version}</openmldb.batch.version>
-        <hybridse.native.version>${default.hybridse.native.version}</hybridse.native.version>
+        <openmldb.native.version>${default.openmldb.native.version}</openmldb.native.version>
       </properties>
     </profile>
     <profile>
       <id>macos</id>
       <properties>
-        <openmldb.batch.version>${default.openmldb.batch.version}-macos</openmldb.batch.version>
-        <hybridse.native.version>${default.hybridse.native.version}-macos</hybridse.native.version>
+        <openmldb.native.version>${default.openmldb.native.version}-macos</openmldb.native.version>
       </properties>
     </profile>
     <profile>
       <id>allinone</id>
       <properties>
-        <openmldb.batch.version>${default.openmldb.batch.version}-allinone</openmldb.batch.version>
-        <hybridse.native.version>${default.hybridse.native.version}-allinone</hybridse.native.version>
+        <openmldb.native.version>${default.openmldb.native.version}-allinone</openmldb.native.version>
       </properties>
     </profile>
-
-
   </profiles>
 
-        <repositories>
-            <repository>
-                <id>maven-snapshots</id>
-                <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-                <layout>default</layout>
-                <releases>
-                    <enabled>false</enabled>
-                </releases>
-                <snapshots>
-                    <enabled>true</enabled>
-                </snapshots>
-            </repository>
-        </repositories>
+  <repositories>
+    <repository>
+      <id>maven-snapshots</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>
