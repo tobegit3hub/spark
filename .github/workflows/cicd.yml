@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - v3.0.0-openmldb
-      - v3.0.0-openmldb-snapshot
   pull_request:
-
 
 jobs:
   build_spark_distribution:
