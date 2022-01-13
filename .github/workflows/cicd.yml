@@ -33,7 +33,7 @@ jobs:
 
       - name: compile
         run: |
-          ./dev/make-distribution.sh --name openmldbspark --pip --tgz -Phadoop-2.7 -Pyarn
+          ./dev/make-distribution.sh --name openmldbspark --pip --tgz -Phadoop-2.7 -Pyarn -Pallinone
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/v')
