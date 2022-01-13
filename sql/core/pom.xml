@@ -33,7 +33,7 @@
   <properties>
     <sbt.project.name>sql</sbt.project.name>
     <openmldb.batch.version>0.4.0-SNAPSHOT</openmldb.batch.version>
-    <default.openmldb.native.version>0.4.0-SNAPSHOT</default.openmldb.native.version>
+    <default.openmldb.native.version>0.4.0-allinone-SNAPSHOT</default.openmldb.native.version>
   </properties>
 
   <dependencies>
@@ -303,5 +303,4 @@
       </snapshots>
     </repository>
   </repositories>
-
 </project>
