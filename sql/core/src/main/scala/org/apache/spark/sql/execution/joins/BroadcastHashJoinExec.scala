@@ -257,7 +257,8 @@ case class BroadcastHashJoinExec(
   /**
    * Generates the code for left or right outer join.
    */
-  private def codegenOuter(ctx: CodegenContext, input: Seq[ExprCode], isLastJoin: Boolean = false): String = {
+  private def codegenOuter(ctx: CodegenContext, input: Seq[ExprCode],
+                           isLastJoin: Boolean = false): String = {
     val (broadcastRelation, relationTerm) = prepareBroadcast(ctx)
     val (keyEv, anyNull) = genStreamSideJoinKey(ctx, input)
     val matched = ctx.freshName("matched")
@@ -316,7 +317,8 @@ case class BroadcastHashJoinExec(
            |// generate join key for stream side
            |${keyEv.code}
            |// find matches from HashRelation
-           |$iteratorCls $matches = $anyNull ? null : ($iteratorCls)$relationTerm.get(${keyEv.value});
+           |$iteratorCls $matches = $anyNull ?
+           |null : ($iteratorCls)$relationTerm.get(${keyEv.value});
            |boolean $found = false;
            |// the last iteration of this loop is to emit an empty row if there is no matched rows.
            |if ($matches != null && $matches.hasNext() || !$found) {
@@ -335,7 +337,8 @@ case class BroadcastHashJoinExec(
            |// generate join key for stream side
            |${keyEv.code}
            |// find matches from HashRelation
-           |$iteratorCls $matches = $anyNull ? null : ($iteratorCls)$relationTerm.get(${keyEv.value});
+           |$iteratorCls $matches = $anyNull ?
+           |null : ($iteratorCls)$relationTerm.get(${keyEv.value});
            |boolean $found = false;
            |// the last iteration of this loop is to emit an empty row if there is no matched rows.
            |while ($matches != null && $matches.hasNext() || !$found) {

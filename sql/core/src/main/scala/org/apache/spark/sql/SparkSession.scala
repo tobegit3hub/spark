@@ -48,8 +48,10 @@ import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types.{DataType, StructType}
 import org.apache.spark.sql.util.ExecutionListenerManager
 import org.apache.spark.util.{CallSite, Utils}
+// scalastyle:off
 import com._4paradigm.openmldb.batch.api.OpenmldbSession
 import com._4paradigm.hybridse.sdk.UnsupportedHybridSeException
+// scalastyle:on
 
 /**
  * The entry point to programming Spark with the Dataset and DataFrame API.
@@ -547,13 +549,15 @@ class SparkSession private(
     new Dataset(self, Range(start, end, step, numPartitions), Encoders.LONG)
   }
 
+
   /**
    * Creates a `DataFrame` from an `RDD[InternalRow]`.
    */
-  private[sql] def internalCreateDataFrame(
+  def internalCreateDataFrame(
       catalystRows: RDD[InternalRow],
       schema: StructType,
       isStreaming: Boolean = false): DataFrame = {
+    // private[sql] def internalCreateDataFrame(
     // TODO: use MutableProjection when rowRDD is another DataFrame and the applied
     // schema differs from the existing schema on any field data type.
     val logicalPlan = LogicalRDD(
@@ -602,6 +606,7 @@ class SparkSession private(
    |  Everything else  |
    * ----------------- */
 
+  // scalastyle:off
   /**
    * Executes a SQL query using Spark, returning the result as a `DataFrame`.
    * The dialect that is used for SQL parsing can be configured with 'spark.sql.dialect'.
@@ -631,6 +636,7 @@ class SparkSession private(
       }
     }
   }
+  // scalastyle:on
 
   def sparksql(sqlText: String): DataFrame = withActive {
     val tracker = new QueryPlanningTracker

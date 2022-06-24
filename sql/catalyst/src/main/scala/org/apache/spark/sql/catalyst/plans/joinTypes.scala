@@ -110,8 +110,8 @@ case class NaturalJoin(tpe: JoinType) extends JoinType {
 
 case class UsingJoin(tpe: JoinType, usingColumns: Seq[String]) extends JoinType {
   // Add by 4Paradigm
-  require(Seq(Inner, LeftOuter, LeftSemi, RightOuter, FullOuter, LeftAnti, LastJoinType).contains(tpe),
-    "Unsupported using join type " + tpe)
+  require(Seq(Inner, LeftOuter, LeftSemi, RightOuter, FullOuter, LeftAnti, LastJoinType)
+    .contains(tpe), "Unsupported using join type " + tpe)
   override def sql: String = "USING " + tpe.sql
 }
 
