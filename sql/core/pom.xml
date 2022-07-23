@@ -32,8 +32,8 @@
   <url>http://spark.apache.org/</url>
   <properties>
     <sbt.project.name>sql</sbt.project.name>
-    <openmldb.batch.version>0.5.2</openmldb.batch.version>
-    <default.openmldb.native.version>0.5.2</default.openmldb.native.version>
+    <openmldb.batch.version>0.5.3</openmldb.batch.version>
+    <default.openmldb.native.version>0.5.3</default.openmldb.native.version>
   </properties>
 
   <dependencies>
