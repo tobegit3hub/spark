@@ -23,14 +23,6 @@ jobs:
           distribution: 'adopt'
           java-version: '8'
 
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
       - name: compile
         run: |
           ./dev/make-distribution.sh --name openmldbspark --tgz -Phadoop-2.7 -Pyarn -Pkubernetes
