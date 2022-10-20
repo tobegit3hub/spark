@@ -11,9 +11,17 @@ on:
 
 jobs:
   build_spark_distribution:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/4paradigm/hybridsql:0.4.1
+
     steps:
       - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '8'
 
       - name: compile
         run: |
