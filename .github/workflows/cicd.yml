@@ -11,7 +11,7 @@ on:
 
 jobs:
   build_spark_distribution:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     container:
       image: ghcr.io/4paradigm/hybridsql:0.4.1
 
