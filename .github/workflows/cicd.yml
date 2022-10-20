@@ -12,6 +12,7 @@ on:
 jobs:
   build_spark_distribution:
     runs-on: macos-latest
+    steps:
       - name: compile
         run: |
           ./dev/make-distribution.sh --name openmldbspark --tgz -Phadoop-2.7 -Pyarn -Pkubernetes
